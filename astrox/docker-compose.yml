@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  astroxpg:
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    container_name: 'astroxpg'
+    restart: always
+    volumes:
+      - astroxpg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: astrouser
+      POSTGRES_PASSWORD: astropassword
+
+volumes:
+  astroxpg-data:
