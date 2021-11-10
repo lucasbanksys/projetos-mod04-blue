@@ -15,7 +15,7 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
-  @Post('add-movie')
+  @Post('add')
   create(@Body() createMovieDto: CreateMovieDto) {
     return this.moviesService.create(createMovieDto);
   }
@@ -25,7 +25,7 @@ export class MoviesController {
     return this.moviesService.findAll();
   }
 
-  @Get('find:id')
+  @Get('find/:id')
   findOne(@Param('id') id: string) {
     return this.moviesService.findOne(id);
   }
@@ -35,7 +35,7 @@ export class MoviesController {
   //   return this.moviesService.update(id, updateMovieDto);
   // }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.moviesService.remove(id);
   }
