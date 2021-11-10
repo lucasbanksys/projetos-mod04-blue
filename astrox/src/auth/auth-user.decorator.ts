@@ -7,3 +7,5 @@ const AuthUser = createParamDecorator((_, context: ExecutionContext) => {
   delete user.password;
   return user;
 });
+
+export default AuthUser;
