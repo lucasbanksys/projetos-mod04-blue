@@ -15,6 +15,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from 'src/users/enum/role.enum';
 import { RolesGuard } from 'src/auth/role.guards';
 import { Role } from 'src/auth/role.decorator';
+import { User } from '@prisma/client';
+import AuthUser from 'src/auth/auth-user.decorator';
 
 @Controller('movies')
 export class MoviesController {
@@ -49,5 +51,15 @@ export class MoviesController {
   @UseGuards(AuthGuard(), RolesGuard)
   remove(@Param('id') id: string) {
     return this.moviesService.remove(id);
+  }
+
+  @Get('like/:id')
+  @UseGuards(AuthGuard())
+  likeMovie(
+    @AuthUser() user: User,
+    @Param('id') movieId: string,
+  ): Promise<User> {
+    const userId = user.id;
+    return this.moviesService.likeMovie(userId, movieId);
   }
 }
