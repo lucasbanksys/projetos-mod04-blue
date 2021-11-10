@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
-import { CreateMovieDto } from './dto/create-movie.dto';
-import { UpdateMovieDto } from './dto/update-movie.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
+import { Prisma, Movie, User } from '@prisma/client';
 
 @Injectable()
 export class MoviesService {
-  create(createMovieDto: CreateMovieDto) {
-    return 'This action adds a new movie';
+  constructor(private prisma: PrismaService) {}
+
+  async create(data: Prisma.MovieCreateInput): Promise<Movie> {
+    const movie = await this.prisma.movie.create({ data });
+    return movie;
   }
 
-  findAll() {
-    return `This action returns all movies`;
+  async findOne(id: string): Promise<Movie> {
+    const movie = await this.prisma.movie.findUnique({
+      where: { id },
+    });
+
+    if (!movie) {
+      throw new NotFoundException('Filme Não encontrado na base de dados');
+    }
+
+    return movie;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} movie`;
+  async findAll(): Promise<Movie[]> {
+    const movies = await this.prisma.movie.findMany();
+    return movies;
   }
 
-  update(id: number, updateMovieDto: UpdateMovieDto) {
-    return `This action updates a #${id} movie`;
+  async remove(id: string) {
+    const movie = await this.prisma.movie.delete({
+      where: { id },
+    });
+
+    if (!movie) {
+      throw new NotFoundException('Filme Não encontrado na base de dados');
+    }
+    return {
+      message: 'Filme deletado com sucesso!',
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} movie`;
+  async likeMovie(userId: string, movieId: string): Promise<User> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        movies: {
+          connect: {
+            id: movieId,
+          },
+        },
+      },
+    });
+
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        movies: true,
+      },
+    });
   }
 }
