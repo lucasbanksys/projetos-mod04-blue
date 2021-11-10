@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma, Movie, User } from '@prisma/client';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Injectable()
 export class MoviesService {
@@ -26,6 +27,13 @@ export class MoviesService {
   async findAll(): Promise<Movie[]> {
     const movies = await this.prisma.movie.findMany();
     return movies;
+  }
+
+  async update(id: string, data: UpdateMovieDto) {
+    return await this.prisma.movie.update({
+      where: { id },
+      data,
+    });
   }
 
   async remove(id: string) {

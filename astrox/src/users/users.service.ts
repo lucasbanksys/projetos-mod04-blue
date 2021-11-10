@@ -9,6 +9,7 @@ import { PrismaService } from 'src/prisma.service';
 import { Prisma, User } from '@prisma/client';
 import { UserRole } from './enum/role.enum';
 import * as bcrypt from 'bcrypt';
+import { userInfo } from 'os';
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
@@ -56,8 +57,12 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, data: UpdateUserDto) {
+    const updatedUser = await this.prisma.user.update({
+      where: {id}, data
+    });
+    delete updatedUser.password
+    return updatedUser
   }
 
   async remove(id: string) {
